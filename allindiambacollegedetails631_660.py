@@ -8556,11 +8556,15 @@ def parse_faculty_reviews(driver,URLS):
         driver.get(URLS["faculty"])
     wait = WebDriverWait(driver, 15)
 
-    section = wait.until(
-        EC.presence_of_element_located(
-            (By.XPATH, "//h2[contains(text(),'Faculty Reviews')]/ancestor::section")
+    try:
+        section = WebDriverWait(driver, 5).until(
+            EC.presence_of_element_located(
+                (By.XPATH, "//h2[contains(translate(text(),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'faculty')]")
+            )
         )
-    )
+    except TimeoutException:
+        print("Faculty section not found, skipping")
+        return []
 
     driver.execute_script(
         "arguments[0].scrollIntoView({block:'center'});", section
